@@ -2,6 +2,7 @@ package com.ssheld.giflib.web.controller;
 
 import com.ssheld.giflib.model.Category;
 import com.ssheld.giflib.service.CategoryServiceImpl;
+import com.ssheld.giflib.web.Color;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,10 @@ public class CategoryController {
     @SuppressWarnings("unchecked")
     @RequestMapping("/categories")
     public String listCategories(Model model) {
-        // TODO: Get all categories
+        // Get list of all categories
         List<Category> categories = categoryService.findAll();
-
-        model.addAttribute("categories",categories);
+        // Add list of categories to our model
+        model.addAttribute("categories", categories);
         return "category/index";
     }
 
@@ -43,7 +44,9 @@ public class CategoryController {
     // Form for adding a new category
     @RequestMapping("categories/add")
     public String formNewCategory(Model model) {
-        // TODO: Add model attributes needed for new form
+        // Add model attributes needed for new form
+        model.addAttribute("category", new Category());
+        model.addAttribute("colors", Color.values());
 
         return "category/form";
     }
@@ -67,11 +70,13 @@ public class CategoryController {
 
     // Add a category
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
-    public String addCategory() {
-        // TODO: Add category if valid data was received
-
-        // TODO: Redirect browser to /categories
-        return null;
+    public String addCategory(Category category) {
+        // Pass in the category to our service save method
+        categoryService.save(category);
+        // Redirect browser to /categories
+        // When Spring sees a response starting with "redirect" it will send a redirect
+        // response code along with a location header, which in this case is "/categories"
+        return "redirect:/categories";
     }
 
     // Delete an existing category
