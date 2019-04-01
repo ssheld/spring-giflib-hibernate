@@ -54,25 +54,47 @@ public class CategoryController {
         }
         // Else user has submitted invalid data and we want to show the invalid category user submitted
         model.addAttribute("colors", Color.values());
-
+        model.addAttribute("action", "/categories");
+        model.addAttribute("heading", "New Category");
+        model.addAttribute("submit", "Add");
         return "category/form";
     }
 
     // Form for editing an existing category
     @RequestMapping("categories/{categoryId}/edit")
     public String formEditCategory(@PathVariable Long categoryId, Model model) {
-        // TODO: Add model attributes needed for edit form
-
+        // Add model attributes needed for edit form
+        if (!model.containsAttribute("category")) {
+            model.addAttribute("category", categoryService.findById(categoryId));
+        }
+        // Else user has submitted invalid data and we want to show the invalid category user submitted
+        model.addAttribute("colors", Color.values());
+        model.addAttribute("action", String.format("/categories/%s", categoryId));
+        model.addAttribute("heading", "Edit Category");
+        model.addAttribute("submit", "Update");
         return "category/form";
     }
 
     // Update an existing category
     @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.POST)
-    public String updateCategory() {
-        // TODO: Update category if valid data was received
-
-        // TODO: Redirect browser to /categories
-        return null;
+    public String updateCategory(@Valid Category category, BindingResult result, RedirectAttributes redirectAttributes) {
+        // Update category if valid data was received
+        if (result.hasErrors()) {
+            // Include the validation errors upon redirect
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category", result);
+            // Add category if invalid data was received
+            redirectAttributes.addFlashAttribute("category", category);
+            // Redirect back to the form
+            return String.format("redirect:/categories/%s/edit", category.getId());
+        }
+        // Pass in the category to our service save method
+        categoryService.save(category);
+        // Add flash message
+        redirectAttributes.addFlashAttribute("flash", new FlashMessage("Category successfully updated!", FlashMessage.Status.SUCCESS));
+        // Redirect browser to /categories
+        // When Spring sees a response starting with "redirect" it will send a redirect
+        // response code along with a location header, which in this case is "/categories"
+        return "redirect:/categories";
     }
 
     // Add a category
