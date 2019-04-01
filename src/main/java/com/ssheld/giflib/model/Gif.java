@@ -1,5 +1,7 @@
 package com.ssheld.giflib.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -12,6 +14,11 @@ public class Gif {
 
     @Lob
     private byte[] bytes;
+
+    // @Transient means that the field value will NOT be persisted to the database.
+    @Transient
+    private MultipartFile file;
+
     private String description;
 
     @ManyToOne
