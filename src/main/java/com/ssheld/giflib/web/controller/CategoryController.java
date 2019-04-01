@@ -3,15 +3,19 @@ package com.ssheld.giflib.web.controller;
 import com.ssheld.giflib.model.Category;
 import com.ssheld.giflib.service.CategoryServiceImpl;
 import com.ssheld.giflib.web.Color;
+import com.ssheld.giflib.web.FlashMessage;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +49,10 @@ public class CategoryController {
     @RequestMapping("categories/add")
     public String formNewCategory(Model model) {
         // Add model attributes needed for new form
-        model.addAttribute("category", new Category());
+        if (!model.containsAttribute("category")) {
+            model.addAttribute("category", new Category());
+        }
+        // Else user has submitted invalid data and we want to show the invalid category user submitted
         model.addAttribute("colors", Color.values());
 
         return "category/form";
@@ -70,9 +77,20 @@ public class CategoryController {
 
     // Add a category
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
-    public String addCategory(Category category) {
+    public String addCategory(@Valid Category category, BindingResult result, RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            // Include the validation errors upon redirect
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category", result);
+            // Add category if invalid data was received
+            redirectAttributes.addFlashAttribute("category", category);
+            // Redirect back to the form
+            return "redirect:/categories/add";
+        }
         // Pass in the category to our service save method
         categoryService.save(category);
+        // Add flash message
+        redirectAttributes.addFlashAttribute("flash", new FlashMessage("Category successfully added!", FlashMessage.Status.SUCCESS));
         // Redirect browser to /categories
         // When Spring sees a response starting with "redirect" it will send a redirect
         // response code along with a location header, which in this case is "/categories"
