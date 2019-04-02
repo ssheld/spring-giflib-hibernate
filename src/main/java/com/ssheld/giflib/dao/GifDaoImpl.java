@@ -46,9 +46,7 @@ public class GifDaoImpl implements GifDao {
     public Gif findById(Long id) {
         // Open session
         Session session = sessionFactory.openSession();
-
         Gif gif = session.get(Gif.class, id);
-
         // Close session
         session.close();
 
@@ -61,7 +59,7 @@ public class GifDaoImpl implements GifDao {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
-        session.save(gif);
+        session.saveOrUpdate(gif);
         session.getTransaction().commit();;
 
         // Close session
