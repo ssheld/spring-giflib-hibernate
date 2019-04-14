@@ -139,10 +139,16 @@ public class GifController {
     // Search results
     @RequestMapping("/search")
     public String searchResults(@RequestParam String q, Model model) {
-        // TODO: Get list of GIFs whose description contains value specified by q
-        List<Gif> gifs = new ArrayList<>();
-
-        model.addAttribute("gifs",gifs);
+        List<Gif> gifs = gifService.findAll();
+        List<Gif> searchResult = new ArrayList<>();
+        for (Gif g : gifs) {
+            System.out.printf("Looking at gif %s%n", g.getDescription());
+            if (g.getDescription().toLowerCase().contains(q)) {
+                System.out.printf("Adding the gif!%n");
+                searchResult.add(g);
+            }
+        }
+        model.addAttribute("gifs", searchResult);
         return "gif/index";
     }
 }
