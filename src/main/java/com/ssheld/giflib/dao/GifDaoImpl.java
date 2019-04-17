@@ -64,7 +64,6 @@ public class GifDaoImpl implements GifDao {
 
         // Close session
         session.close();
-
     }
 
     @Override

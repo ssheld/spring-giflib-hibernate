@@ -1,10 +1,11 @@
 package com.ssheld.giflib.model;
 
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 

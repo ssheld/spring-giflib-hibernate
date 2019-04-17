@@ -7,7 +7,6 @@ import com.ssheld.giflib.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -55,9 +54,16 @@ public class GifController {
     // Favorites - index of all GIFs marked favorite
     @RequestMapping("/favorites")
     public String favorites(Model model) {
-        // TODO: Get list of all GIFs marked as favorite
+        // Grab all GIFs then check which ones
+        // are favorited.
         List<Gif> faves = new ArrayList<>();
-
+        List<Gif> gifs = new ArrayList<>();
+        gifs = gifService.findAll();
+        for (Gif g : gifs) {
+            if (g.isFavorite()) {
+                faves.add(g);
+            }
+        }
         model.addAttribute("gifs",faves);
         model.addAttribute("username","Stephen Sheldon"); // Static username
         return "gif/favorites";
@@ -142,8 +148,8 @@ public class GifController {
         List<Gif> gifs = gifService.findAll();
         List<Gif> searchResult = new ArrayList<>();
         for (Gif g : gifs) {
-            System.out.printf("Looking at gif %s%n", g.getDescription());
-            if (g.getDescription().toLowerCase().contains(q)) {
+            System.out.println(g.getDescription().toLowerCase().contains(q));
+            if (g.getDescription().toLowerCase().contains(q.toLowerCase())) {
                 System.out.printf("Adding the gif!%n");
                 searchResult.add(g);
             }
