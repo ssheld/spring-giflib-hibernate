@@ -34,4 +34,5 @@ dependencies {
     compile 'javax.validation:validation-api:2.0.0.Final'
     compile 'org.springframework.boot:spring-boot-starter-web:2.1.4.RELEASE'
     compile 'com.h2database:h2:1.4.191'
+//    compile 'mysql:mysql-connector-java:6.0.3'
 }
