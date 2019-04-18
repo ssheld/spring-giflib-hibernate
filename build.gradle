@@ -23,6 +23,10 @@ repositories {
     mavenCentral()
 }
 
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '5.3.1'
+//}
+
 // Specify dependencies
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf:2.1.4.RELEASE'
